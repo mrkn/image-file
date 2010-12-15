@@ -9,3 +9,5 @@ RSpec.configure do |c|
   c.filter_run(focused:true)
   c.run_all_when_everything_filtered = true
 end
+
+require 'image_file'
