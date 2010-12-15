@@ -3,3 +3,5 @@ image_file_common_deps = internal.h $(hdrdir)/ruby.h
 image_file.o: image_file.c $(image_file_common_deps)
 
 image.o: image.c $(image_file_common_deps)
+
+jpeg_reader.o: jpeg_reader.c $(image_file_common_deps)

@@ -1,3 +1,5 @@
+SPEC_DIR = File.expand_path('..', __FILE__)
+
 Dir['spec/support/**/*.rb'].map {|f| require_relative f }
 
 def in_editor?
