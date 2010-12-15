@@ -1,0 +1,16 @@
+require 'autotest/restart'
+
+Autotest.add_hook :initialize do |at|
+  at.unit_diff = 'cat'
+end
+
+Autotest.add_hook :ran_command do |at|
+  log_file = File.expand_path('../tmp/autotest.log', __FILE__)
+  File.open(log_file, 'wb') {|f|
+    content = at.results.join
+    content.gsub!(/\x1B\[(\d+)m/, '')
+    f.write(content)
+  }
+end
+
+# vim: filetype=ruby
