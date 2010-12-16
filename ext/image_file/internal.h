@@ -21,6 +21,7 @@ typedef enum {
 } rb_image_file_image_pixel_format_t;
 
 rb_image_file_image_pixel_format_t rb_image_file_image_symbol_to_pixel_format(VALUE symbol);
+VALUE rb_image_file_image_pixel_format_to_symbol(rb_image_file_image_pixel_format_t const pf);
 
 void rb_image_file_Init_image_file_image(void);
 void rb_image_file_Init_image_file_jpeg_reader(void);

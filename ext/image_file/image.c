@@ -97,8 +97,8 @@ minimum_buffer_size(rb_image_file_image_pixel_format_t const pf, long const st, 
     return -1;
 }
 
-static VALUE
-pixel_format_to_symbol(rb_image_file_image_pixel_format_t const pf)
+VALUE
+rb_image_file_image_pixel_format_to_symbol(rb_image_file_image_pixel_format_t const pf)
 {
     switch (pf) {
 	case RB_IMAGE_FILE_IMAGE_PIXEL_FORMAT_INVALID:
@@ -269,7 +269,7 @@ static VALUE
 image_get_pixel_format(VALUE obj)
 {
     struct image_data* image = get_image_data(obj);
-    return pixel_format_to_symbol(image->pixel_format);
+    return rb_image_file_image_pixel_format_to_symbol(image->pixel_format);
 }
 
 static VALUE
