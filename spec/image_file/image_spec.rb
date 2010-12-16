@@ -28,6 +28,11 @@ module ImageFile
     its(:height) { should be == 42 }
     its(:row_stride) { should be == 42 }
     its(:pixel_format) { should be == :RGB24 }
+
+    describe "create_cairo_surface" do
+      subject { Image.new(width:42, height:42, pixel_format: :RGB24).create_cairo_surface }
+      it { should be_a(Cairo::Surface) }
+    end
   end
 
   describe Image, "with row-stride" do

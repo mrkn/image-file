@@ -13,3 +13,4 @@ RSpec.configure do |c|
 end
 
 require 'image_file'
+require 'cairo'

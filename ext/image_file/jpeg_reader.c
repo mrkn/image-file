@@ -702,10 +702,9 @@ convert_scanlines_from_RGB(
 		uint32_t* dst = (uint32_t*)(RSTRING_PTR(image_buffer) + i*stride*4);
 		src = rows[i];
 		for (j = 0; j < width; ++j) {
-		    uint32_t const pixel =
-			((uint32_t)src[j] << 16) |
-			((uint32_t)src[j+1] << 8) |
-			src[j+2];
+		    uint32_t pixel = (uint32_t)(*src++) << 16;
+		    pixel |= (uint32_t)(*src++) << 8;
+		    pixel |= *src++;
 		    *dst++ = pixel;
 		}
 		while (j++ < stride) *dst++ = 0;
@@ -717,10 +716,9 @@ convert_scanlines_from_RGB(
 		uint16_t* dst = (uint16_t*)(RSTRING_PTR(image_buffer) + i*stride*2);
 		src = rows[i];
 		for (j = 0; j < width; ++j) {
-		    uint16_t const pixel =
-			((uint16_t)(src[j] >> 3) << 11) |
-			((uint16_t)(src[j+1] >> 2) << 5) |
-			(src[j+2] >> 3);
+		    uint16_t pixel = (uint16_t)(*src++ >> 3) << 11;
+		    pixel |= (uint16_t)(*src++ >> 2) << 5;
+		    pixel |= *src++ >> 3;
 		    *dst++ = pixel;
 		}
 		while (j++ < stride) *dst++ = 0;

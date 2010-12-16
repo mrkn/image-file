@@ -1,5 +1,6 @@
 #include <ruby.h>
 
+
 #include <assert.h>
 
 #undef ARG_UNUSED
@@ -69,7 +70,7 @@ file_p(VALUE fname)
     return RTEST(rb_funcall(rb_cFile, id_file_p, 1, fname));
 }
 
-static inline int
+static inline void
 check_file_not_found(VALUE fname)
 {
     if (!file_p(fname)) {

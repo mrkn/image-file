@@ -1,5 +1,9 @@
 #include "internal.h"
 
+#ifdef HAVE_RB_CAIRO_H
+# include <rb_cairo.h>
+#endif
+
 VALUE cImageFileImage = Qnil;
 
 static ID id_ARGB32;
@@ -67,6 +71,52 @@ get_image_data(VALUE const obj)
     struct image_data* image;
     TypedData_Get_Struct(obj, struct image_data, &image_data_type, image);
     return image;
+}
+
+#ifdef HAVE_RB_CAIRO_H
+static cairo_format_t
+pixel_format_to_cairo_format(rb_image_file_image_pixel_format_t const pf)
+{
+    switch (pf) {
+	case RB_IMAGE_FILE_IMAGE_PIXEL_FORMAT_INVALID:
+	    break;
+
+	case RB_IMAGE_FILE_IMAGE_PIXEL_FORMAT_ARGB32:
+	    return CAIRO_FORMAT_ARGB32;
+
+	case RB_IMAGE_FILE_IMAGE_PIXEL_FORMAT_RGB24:
+	    return CAIRO_FORMAT_RGB24;
+
+	case RB_IMAGE_FILE_IMAGE_PIXEL_FORMAT_RGB16_565:
+	    return CAIRO_FORMAT_RGB16_565;
+
+	default:
+	    break;
+    }
+    rb_bug("unknown pixel format (%d)", pf);
+    return -1;
+}
+#endif /* HAVE_RB_CAIRO_H */
+
+static inline int
+pixel_format_size(rb_image_file_image_pixel_format_t const pf)
+{
+    switch (pf) {
+	case RB_IMAGE_FILE_IMAGE_PIXEL_FORMAT_INVALID:
+	    return -1;
+
+	case RB_IMAGE_FILE_IMAGE_PIXEL_FORMAT_ARGB32:
+	case RB_IMAGE_FILE_IMAGE_PIXEL_FORMAT_RGB24:
+	    return 4;
+
+	case RB_IMAGE_FILE_IMAGE_PIXEL_FORMAT_RGB16_565:
+	    return 2;
+
+	default:
+	    break;
+    }
+    assert(0); /* MUST NOT REACH HERE */
+    return -1;
 }
 
 static long
@@ -214,8 +264,14 @@ process_arguments_of_image_initialize(int const argc, VALUE* const argv,
     if (ht <= 0)
 	rb_raise(rb_eArgError, "zero or negative image height");
 
-    if (NIL_P(stride))
+    if (NIL_P(stride)) {
+#ifdef HAVE_RB_CAIRO_H
+	st = cairo_format_stride_for_width(pixel_format_to_cairo_format(pf), (int)wd) / pixel_format_size(pf);
+	stride = INT2NUM(st);
+#else
 	stride = width;
+#endif
+    }
     st = NUM2LONG(stride);
     if (st <= 0)
 	rb_raise(rb_eArgError, "zero or negative image row-stride");
@@ -301,6 +357,29 @@ image_get_row_stride(VALUE obj)
     return LONG2NUM(image->stride);
 }
 
+
+#ifdef HAVE_RB_CAIRO_H
+static VALUE
+image_create_cairo_surface(VALUE obj)
+{
+    cairo_surface_t* cairo_surface;
+    cairo_format_t cairo_format;
+    unsigned char* data;
+    VALUE surface;
+    struct image_data* image = get_image_data(obj);
+
+    data = xmalloc(sizeof(unsigned char)*RSTRING_LEN(image->buffer));
+    MEMCPY(data, RSTRING_PTR(image->buffer), unsigned char, RSTRING_LEN(image->buffer));
+
+    cairo_format = pixel_format_to_cairo_format(image->pixel_format);
+    cairo_surface = cairo_image_surface_create_for_data(
+	    data, cairo_format, (int)image->width, (int)image->height,
+	    (int)image->stride*pixel_format_size(image->pixel_format));
+    surface = CRSURFACE2RVAL_WITH_DESTROY(cairo_surface);
+    return surface;
+}
+#endif
+
 void
 rb_image_file_Init_image_file_image(void)
 {
@@ -312,6 +391,10 @@ rb_image_file_Init_image_file_image(void)
     rb_define_method(cImageFileImage, "width", image_get_width, 0);
     rb_define_method(cImageFileImage, "height", image_get_height, 0);
     rb_define_method(cImageFileImage, "row_stride", image_get_row_stride, 0);
+
+#ifdef HAVE_RB_CAIRO_H
+    rb_define_method(cImageFileImage, "create_cairo_surface", image_create_cairo_surface, 0);
+#endif
 
     CONST_ID(id_ARGB32, "ARGB32");
     CONST_ID(id_RGB24, "RGB24");
