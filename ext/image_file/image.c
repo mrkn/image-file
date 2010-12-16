@@ -120,7 +120,7 @@ pixel_format_to_symbol(rb_image_file_image_pixel_format_t const pf)
     return Qnil;
 }
 
-static rb_image_file_image_pixel_format_t
+static inline rb_image_file_image_pixel_format_t
 id_to_pixel_format(ID const id)
 {
     if (id == id_ARGB32)
@@ -133,6 +133,13 @@ id_to_pixel_format(ID const id)
 	return RB_IMAGE_FILE_IMAGE_PIXEL_FORMAT_RGB16_565;
 
     return RB_IMAGE_FILE_IMAGE_PIXEL_FORMAT_INVALID;
+}
+
+rb_image_file_image_pixel_format_t
+rb_image_file_image_symbol_to_pixel_format(VALUE symbol)
+{
+    Check_Type(symbol, T_SYMBOL);
+    return id_to_pixel_format(SYM2ID(symbol));
 }
 
 static rb_image_file_image_pixel_format_t

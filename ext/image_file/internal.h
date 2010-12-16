@@ -20,6 +20,8 @@ typedef enum {
     RB_IMAGE_FILE_IMAGE_PIXEL_FORMAT_RGB16_565 = 4,
 } rb_image_file_image_pixel_format_t;
 
+rb_image_file_image_pixel_format_t rb_image_file_image_symbol_to_pixel_format(VALUE symbol);
+
 void rb_image_file_Init_image_file_image(void);
 void rb_image_file_Init_image_file_jpeg_reader(void);
 
