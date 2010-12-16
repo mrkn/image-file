@@ -229,6 +229,7 @@ process_arguments_of_image_initialize(int const argc, VALUE* const argv,
 	buffer = rb_str_new(NULL, min_len);
     }
     else if (RSTRING_LEN(buffer) < min_len) {
+	void rb_str_modify_expand(VALUE, long);
 	rb_warning("the size of the given data is too short for the given size of image");
 	rb_str_modify_expand(buffer, min_len - RSTRING_LEN(buffer));
     }
@@ -263,6 +264,13 @@ image_initialize(int argc, VALUE* argv, VALUE obj)
     image->stride = st;
 
     return obj;
+}
+
+VALUE
+rb_image_file_image_get_buffer(VALUE obj)
+{
+    struct image_data* image = get_image_data(obj);
+    return image->buffer;
 }
 
 static VALUE
