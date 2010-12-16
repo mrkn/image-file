@@ -198,27 +198,20 @@ process_arguments_of_image_initialize(int const argc, VALUE* const argv,
     if (NIL_P(width))
 	rb_raise(rb_eArgError, "missing image width");
     wd = NUM2LONG(width);
-    if (wd < 0)
-	rb_raise(rb_eArgError, "negative image width");
-    else if (0 == wd)
-	rb_raise(rb_eArgError, "zero image width");
+    if (wd <= 0)
+	rb_raise(rb_eArgError, "zero or negative image width");
 
     if (NIL_P(height))
 	rb_raise(rb_eArgError, "missing image height");
-    Check_Type(height, T_FIXNUM);
     ht = NUM2LONG(height);
-    if (ht < 0)
-	rb_raise(rb_eArgError, "negative image height");
-    else if (0 == ht)
-	rb_raise(rb_eArgError, "zero image height");
+    if (ht <= 0)
+	rb_raise(rb_eArgError, "zero or negative image height");
 
     if (NIL_P(stride))
 	stride = width;
     st = NUM2LONG(stride);
-    if (st < 0)
-	rb_raise(rb_eArgError, "negative image row-stride");
-    else if (0 == st)
-	rb_raise(rb_eArgError, "zero image row-stride");
+    if (st <= 0)
+	rb_raise(rb_eArgError, "zero or negative image row-stride");
     else if (st < wd) {
 	rb_warning("the given row-stride is less than the given image width.");
 	st = wd;
