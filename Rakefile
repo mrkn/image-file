@@ -1,10 +1,10 @@
 require 'bundler'
 Bundler.setup
+Bundler::GemHelper.install_tasks
 
 require 'rake/extensiontask'
 Rake::ExtensionTask.new('image_file')
 
-require 'rake'
 require 'rspec/core/rake_task'
 
 desc "Run all examples"
