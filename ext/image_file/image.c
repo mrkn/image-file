@@ -359,6 +359,14 @@ image_get_row_stride(VALUE obj)
 
 
 #ifdef HAVE_RB_CAIRO_H
+static cairo_user_data_key_t const cairo_data_key = {};
+
+static void
+image_surface_did_destroyed(void* data)
+{
+    xfree(data);
+}
+
 static VALUE
 image_create_cairo_surface(VALUE obj)
 {
@@ -375,6 +383,7 @@ image_create_cairo_surface(VALUE obj)
     cairo_surface = cairo_image_surface_create_for_data(
 	    data, cairo_format, (int)image->width, (int)image->height,
 	    (int)image->stride*pixel_format_size(image->pixel_format));
+    cairo_surface_set_user_data(cairo_surface, &cairo_data_key, data, image_surface_did_destroyed);
     surface = CRSURFACE2RVAL_WITH_DESTROY(cairo_surface);
     return surface;
 }
