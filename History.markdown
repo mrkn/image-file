@@ -1,6 +1,12 @@
 image-file release history
 ==========================
 
+0.1.1 / 2010-12-17
+------------------
+
+* Bug fixs
+  * build extension when installing gem.
+
 0.1.0 / 2010-12-16
 ------------------
 

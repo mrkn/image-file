@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.files            = `git ls-files`.split("\n")
   s.test_files       = `git ls-files -- {spec,features}/*`.split("\n")
   s.executables      = `git ls-files -- bin/*`.split("\n").map {|f| File.basename(f) }
+  s.extensions       = `git ls-files -- ext/*`.split("\n").grep(/extconf\.rb\Z/)
   s.extra_rdoc_files = []
   s.rdoc_options     = ['--charset=UTF-8']
   s.require_path     = 'lib'
