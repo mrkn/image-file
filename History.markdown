@@ -1,6 +1,12 @@
 image-file release history
 ==========================
 
+0.1.2 / 2010-12-18
+------------------
+
+* Bug fixs
+  * prevent to collect temprary buffer by GC.
+
 0.1.1 / 2010-12-17
 ------------------
 
