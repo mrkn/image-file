@@ -320,7 +320,7 @@ fill_input_buffer(j_decompress_ptr cinfo)
 	}
 	WARNMS(cinfo, JWRN_JPEG_EOF);
 	/* Insert fake EOI marker */
-	reader->buffer = rb_str_tmp_new(2);
+	RB_GC_GUARD(reader->buffer) = rb_str_tmp_new(2);
 	RSTRING_PTR(reader->buffer)[0] = (JOCTET) 0xFF;
 	RSTRING_PTR(reader->buffer)[1] = (JOCTET) JPEG_EOI;
     }
@@ -848,11 +848,11 @@ jpeg_reader_read_image(int argc, VALUE* argv, VALUE obj)
     image = rb_funcall(cImageFileImage, id_new, 1, params);
     image_buffer = rb_image_file_image_get_buffer(image);
 
-    row_buffer = rb_str_tmp_new(sizeof(JSAMPROW)*ht);
+    RB_GC_GUARD(row_buffer) = rb_str_tmp_new(sizeof(JSAMPROW)*ht);
     rows = (JSAMPARRAY)(RSTRING_PTR(row_buffer));
 
     nc = (long)reader->cinfo.output_components;
-    sample_buffer = rb_str_tmp_new(sizeof(JSAMPLE)*ht*wd*nc);
+    RB_GC_GUARD(sample_buffer) = rb_str_tmp_new(sizeof(JSAMPLE)*ht*wd*nc);
     for (i = 0; i < ht; ++i)
 	rows[i] = (JSAMPROW)(RSTRING_PTR(sample_buffer) + i*wd*nc);
 
